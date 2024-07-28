@@ -40,6 +40,26 @@ public class ControllerVersions {
         return listversions;
     }
     
+    public ModelVersions consultVersion(int id) {
+        ModelVersions version = new ModelVersions();
+        Conexion conectar = new Conexion();
+        String sql = "SELECT * FROM versiones WHERE id ="+id;
+        ResultSet rs;
+        try {
+            rs = conectar.consultar(sql);
+            if(rs.next()){
+                version.setId(rs.getInt("id"));
+                version.setVersion(rs.getString("version"));
+                ControllerApplications application = new ControllerApplications();
+                version.setApplications(application.consultApplication(rs.getInt("aplicacion_id")));
+            }
+        } catch (SQLException error) {
+            System.out.println("Error en la consulta de versiones :"+error);
+            JOptionPane.showMessageDialog(null,"Error en la consulta de versiones");
+        }
+        return version;
+    }
+    
     public void save(ModelVersions model){
         Conexion conectar = new Conexion();
         String sql = "INSERT INTO versiones(aplicacion_id, version) VALUES ('"+model.getApplications().getId()+"','"+model.getVersion()+"')";
@@ -75,7 +95,7 @@ public class ControllerVersions {
         String sql = "DELETE FROM versiones WHERE id =" + model.getId();
         try {            
             if(conectar.ejecutar(sql)){
-                JOptionPane.showMessageDialog(null, "Su registro fue eliminado satisfatoriamente", "Modificación exitosa", JOptionPane.INFORMATION_MESSAGE); 
+                JOptionPane.showMessageDialog(null, "Su registro fue eliminado satisfatoriamente", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE); 
             }else{
                 JOptionPane.showMessageDialog(null, "Error en el proceso de eliminación de datos en versiones, consultar con el administrador.", "Error", JOptionPane.ERROR_MESSAGE);
             }

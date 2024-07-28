@@ -91,7 +91,7 @@ public class ControllerApplications {
         String sql = "UPDATE aplicaciones SET estado='I' WHERE id =" + model.getId();
         try {            
             if(conectar.ejecutar(sql)){
-                JOptionPane.showMessageDialog(null, "Su registro fue eliminado satisfatoriamente", "Modificación exitosa", JOptionPane.INFORMATION_MESSAGE); 
+                JOptionPane.showMessageDialog(null, "Su registro fue eliminado satisfatoriamente", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE); 
             }else{
                 JOptionPane.showMessageDialog(null, "Error en el proceso de eliminación de datos de aplicaciones, consultar con el administrador.", "Error", JOptionPane.ERROR_MESSAGE);
             }
