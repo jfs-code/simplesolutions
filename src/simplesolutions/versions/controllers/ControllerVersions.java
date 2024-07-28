@@ -72,7 +72,7 @@ public class ControllerVersions {
     
     public void delete(ModelVersions model){
         Conexion conectar = new Conexion();
-        String sql = "DELETE FROM WHERE id =" + model.getId();
+        String sql = "DELETE FROM versiones WHERE id =" + model.getId();
         try {            
             if(conectar.ejecutar(sql)){
                 JOptionPane.showMessageDialog(null, "Su registro fue eliminado satisfatoriamente", "Modificación exitosa", JOptionPane.INFORMATION_MESSAGE); 

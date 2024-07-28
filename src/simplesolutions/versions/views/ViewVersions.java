@@ -22,6 +22,7 @@ public class ViewVersions extends javax.swing.JDialog {
     private int editingId = -1;
     
     FacadeVersions facade = new FacadeVersions();
+    private ArrayList<ModelApplications> listApplications;
     
     public ViewVersions(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -64,10 +65,12 @@ public class ViewVersions extends javax.swing.JDialog {
         cleanFields();
         inactivateButtond();
         btnSave.setText("Guardar");
+        cbxApplication.setSelectedIndex(0);
     }
     
     void cleanFields(){
         txtVersion.setText("");
+        cbxApplication.setSelectedIndex(0);
     }
     
     void cleanTable(){
@@ -78,11 +81,12 @@ public class ViewVersions extends javax.swing.JDialog {
         }
     }        
     
-    public void fillComboBox(ArrayList<ModelApplications> listapplications){
+    public void fillComboBox(ArrayList<ModelApplications> listApplications){
+        this.listApplications = listApplications;
         cbxApplication.removeAllItems();
         cbxApplication.addItem("Seleccione Aplicativo");
-        for (int posicion = 0; posicion < listapplications.size(); posicion++) {
-            cbxApplication.addItem(listapplications.get(posicion).getName());
+        for (int posicion = 0; posicion < listApplications.size(); posicion++) {
+            cbxApplication.addItem(listApplications.get(posicion).getName());
         }    
     }
     
@@ -95,16 +99,21 @@ public class ViewVersions extends javax.swing.JDialog {
         }
     }
     
+    
+    
     void save() {
         String version = txtVersion.getText();
-        if (!version.isEmpty()) {
-            ModelVersions model = new ModelVersions();
+        int application = cbxApplication.getSelectedIndex();
+        if (!version.isEmpty() && application != 0) {
+            ModelVersions model = new ModelVersions();            
             model.setVersion(version);
+            ModelApplications selectedApplication = listApplications.get(application - 1);
+            model.setApplications(selectedApplication);
 
             if (isEditing && editingRow != -1) {
                 model.setId(editingId);
                 facade.update(model);
-                tblListVersions.setValueAt(version, editingRow, 1);              
+                tblListVersions.setValueAt(version, editingRow, 2);              
             } else {
                 facade.save(model);
                 facade.populateTable(this);
@@ -116,16 +125,27 @@ public class ViewVersions extends javax.swing.JDialog {
             editingId = -1;
             btnSave.setText("Guardar");
         } else {
-            JOptionPane.showMessageDialog(this, "El nombre no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un aplicativo ó la versión no puede estar vacía.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+    
+    int returnIndex(String name) {
+        int numero = 0;
+        for (int posicion = 0; posicion < listApplications.size(); posicion++) {
+            if(name.equalsIgnoreCase(listApplications.get(posicion).getName())){
+                numero = posicion+1;
+            }
+        }
+        return numero;
     }
     
     void getSelected(){
         int selectedRow = tblListVersions.getSelectedRow();
         if (selectedRow >= 0) {
-            String name = (String) tblListVersions.getValueAt(selectedRow, 1);
-            txtVersion.setText(name);
-
+            String version = (String) tblListVersions.getValueAt(selectedRow, 2);
+            int application = returnIndex((String) tblListVersions.getValueAt(selectedRow, 1));
+            txtVersion.setText(version);
+            cbxApplication.setSelectedIndex(application);
             editingId = (Integer) tblListVersions.getValueAt(selectedRow, 0);
 
             isEditing = true;
