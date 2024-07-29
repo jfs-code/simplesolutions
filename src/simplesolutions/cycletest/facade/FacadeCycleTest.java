@@ -26,20 +26,20 @@ public class FacadeCycleTest {
     
     public void populateComboBox(ViewCycleTest view) {
         ArrayList<ModelVersions> data = controllerVersion.consult();
-//        view.fillComboBox(data);
+        view.fillComboBox(data);
     }
 
     public void populateTable(ViewCycleTest view) {
         ArrayList<ModelCycleTest> data = controller.consult();
-//        view.fillTable(data);
+        view.fillTable(data);
     }
     
     public void save(ModelCycleTest model) {
-//        controller.save(model);
+        controller.save(model);
     }
     
     public void update(ModelCycleTest model) {
-//        controller.update(model);
+        controller.update(model);
     }
     
     public void delete(ModelCycleTest model) {

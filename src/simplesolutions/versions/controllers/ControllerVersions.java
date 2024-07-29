@@ -35,7 +35,7 @@ public class ControllerVersions {
             }
         } catch (SQLException error) {
             System.out.println("Error en la consulta de aplicaciones :"+error);
-            JOptionPane.showMessageDialog(null,"Error en la consulta de aplicaciones");
+            JOptionPane.showMessageDialog(null,"Error en la consulta de versiones");
         }
         return listversions;
     }

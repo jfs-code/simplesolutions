@@ -20,7 +20,7 @@ public class ControllerCycleTest {
     public ArrayList<ModelCycleTest> consult() {
         ArrayList<ModelCycleTest> listCyclesTest = new ArrayList();
         Conexion conectar = new Conexion();
-        String sql = "SELECT v.id, v.version, v.aplicacion_id FROM versiones v INNER JOIN Aplicaciones a ON v.aplicacion_id = a.id WHERE a.estado = 'A'";
+        String sql = "SELECT * FROM ciclosdeprueba c INNER JOIN versiones v ON c.version_id = v.id";
         ResultSet rs;
         try {
             rs = conectar.consultar(sql);
@@ -35,40 +35,40 @@ public class ControllerCycleTest {
             }
         } catch (SQLException error) {
             System.out.println("Error en la consulta de aplicaciones :"+error);
-            JOptionPane.showMessageDialog(null,"Error en la consulta de aplicaciones");
+            JOptionPane.showMessageDialog(null,"Error en la consulta de ciclo de pruebas");
         }
         return listCyclesTest;
     }
     
-//    public void save(ModelCycleTest model){
-//        Conexion conectar = new Conexion();
-//        String sql = "INSERT INTO ciclosdeprueba(aplicacion_id, version) VALUES ('"+model.getApplications().getId()+"','"+model.getVersion()+"')";
-//        try {
-//            if(conectar.ejecutar(sql)){
-//                JOptionPane.showMessageDialog(null, "Sus datos fueron registrados satisfatoriamente", "Guardado exitoso", JOptionPane.INFORMATION_MESSAGE);
-//            }else{
-//                JOptionPane.showMessageDialog(null, "Error en el proceso de guardar los datos en versiones, consultar con el administrador.", "Error", JOptionPane.ERROR_MESSAGE);
-//            }        
-//        } catch (HeadlessException error) {
-//            System.out.println("Error en insertar datos en versiones : "+error);
-//        }
-//    }
-//    
-//    public void update(ModelCycleTest model){
-//        Conexion conectar = new Conexion();
-//        String sql = "UPDATE ciclosdeprueba SET version='"+model.getVersion()
-//               +"', aplicacion_id ='"+model.getApplications().getId()
-//               +"' WHERE id ="+model.getId();
-//        try {            
-//            if(conectar.ejecutar(sql)){
-//                JOptionPane.showMessageDialog(null, "Su registro fue modificado satisfatoriamente", "Modificación exitosa", JOptionPane.INFORMATION_MESSAGE); 
-//            }else{
-//                JOptionPane.showMessageDialog(null, "Error en el proceso de modificación de datos en versiones, consultar con el administrador.", "Error", JOptionPane.ERROR_MESSAGE);
-//            }
-//        } catch (HeadlessException error) {
-//            System.out.println("Error en modificar datos de versiones : "+error);
-//        }       
-//    }
+    public void save(ModelCycleTest model){
+        Conexion conectar = new Conexion();
+        String sql = "INSERT INTO ciclosdeprueba(version_id, nombre_ciclo) VALUES ('"+model.getVersions().getId()+"','"+model.getNameCycle()+"')";
+        try {
+            if(conectar.ejecutar(sql)){
+                JOptionPane.showMessageDialog(null, "Sus datos fueron registrados satisfatoriamente", "Guardado exitoso", JOptionPane.INFORMATION_MESSAGE);
+            }else{
+                JOptionPane.showMessageDialog(null, "Error en el proceso de guardar los datos en ciclo de pruebas, consultar con el administrador.", "Error", JOptionPane.ERROR_MESSAGE);
+            }        
+        } catch (HeadlessException error) {
+            System.out.println("Error en insertar datos en ciclo de pruebas : "+error);
+        }
+    }
+    
+    public void update(ModelCycleTest model){
+        Conexion conectar = new Conexion();
+        String sql = "UPDATE ciclosdeprueba SET nombre_ciclo='"+model.getNameCycle()
+               +"', version_id ='"+model.getVersions().getId()
+               +"' WHERE id ="+model.getId();
+        try {            
+            if(conectar.ejecutar(sql)){
+                JOptionPane.showMessageDialog(null, "Su registro fue modificado satisfatoriamente", "Modificación exitosa", JOptionPane.INFORMATION_MESSAGE); 
+            }else{
+                JOptionPane.showMessageDialog(null, "Error en el proceso de modificación de datos en ciclo de pruebas, consultar con el administrador.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (HeadlessException error) {
+            System.out.println("Error en modificar datos de ciclo de pruebas : "+error);
+        }       
+    }
     
     public void delete(ModelCycleTest model){
         Conexion conectar = new Conexion();
