@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import simplesolutions.applications.models.ModelApplications;
 import simplesolutions.cycletest.facade.FacadeCycleTest;
 import simplesolutions.cycletest.models.ModelCycleTest;
 import simplesolutions.versions.models.ModelVersions;
@@ -20,9 +21,12 @@ public class ViewCycleTest extends javax.swing.JDialog {
     private boolean isEditing = false;
     private int editingRow = -1;
     private int editingId = -1;
+    private int idApplication = 0;
     
     FacadeCycleTest facade = new FacadeCycleTest();
+    private ArrayList<ModelApplications> listApplications;
     private ArrayList<ModelVersions> listVersions;
+    private ArrayList<ModelCycleTest> listCycleTests;
     
     public ViewCycleTest(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -30,16 +34,19 @@ public class ViewCycleTest extends javax.swing.JDialog {
         init();
     }
     
-    private void init(){             
-        facade.populateComboBox(this);
+    private void init(){   
+        cleanComboBoxVersion();
+        facade.populateComboBoxApplications(this);        
         facade.populateTable(this);
         inactivateButtond();
         cleanFields();
         
         btnSave.addActionListener(e -> save());
         btnDelete.addActionListener(e -> delete());
+        btnClean.addActionListener(e -> clean());
         
-        cbxVersions.addActionListener(e -> getSelectedComboBox());
+        cbxApplication.addActionListener(e -> getSelectedComboBoxApplications());
+//        cbxVersions.addActionListener(e -> getSelectedComboBox());
         
         tblListCycles.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -67,13 +74,20 @@ public class ViewCycleTest extends javax.swing.JDialog {
         cleanFields();
         inactivateButtond();
         btnSave.setText("Guardar");
+        cbxApplication.setSelectedIndex(0);
         cbxVersions.setSelectedIndex(0);
+    }
+    
+    void cleanComboBoxVersion(){
+        cbxVersions.removeAllItems();
+        cbxVersions.addItem("Seleccione la versión");
     }
     
     void cleanFields(){
         txtCycle.setText("");
-        txtApplication.setText("");
-        cbxVersions.setSelectedIndex(0);
+        cbxApplication.setSelectedIndex(0);
+        cleanComboBoxVersion();
+        inactivateButtond();
     }
     
     void cleanTable(){
@@ -85,17 +99,27 @@ public class ViewCycleTest extends javax.swing.JDialog {
         }
     }        
     
-    public void fillComboBox(ArrayList<ModelVersions> listVersions){
+    public void fillComboBoxApplications(ArrayList<ModelApplications> listApplications){
+        this.listApplications = listApplications;
+        cbxApplication.removeAllItems();
+        cbxApplication.addItem("Seleccione el aplicativo");
+        for (ModelApplications app : listApplications) {
+            cbxApplication.addItem(app.getName());
+        }  
+    }
+    
+    public void fillComboBoxVersions(ArrayList<ModelVersions> listVersions){        
         this.listVersions = listVersions;
         cbxVersions.removeAllItems();
         cbxVersions.addItem("Seleccione la versión");
-        for (int posicion = 0; posicion < listVersions.size(); posicion++) {
-            cbxVersions.addItem(listVersions.get(posicion).getVersion());
+        for (ModelVersions version : listVersions) {
+            cbxVersions.addItem(version.getVersion());
         }    
     }
     
     public void fillTable(ArrayList<ModelCycleTest> listCycleTests){
         cleanTable();
+        this.listCycleTests = listCycleTests;
         for (int posicion = 0; posicion < listCycleTests.size(); posicion++) {
             tblListCycles.setValueAt(posicion+1, posicion,0);
             tblListCycles.setValueAt(listCycleTests.get(posicion).getNameCycle(), posicion,1);
@@ -105,9 +129,10 @@ public class ViewCycleTest extends javax.swing.JDialog {
     }
     
     void save() {
-        String cycleTest = txtCycle.getText();
+        String application = cbxApplication.getSelectedItem().toString();
         int version = cbxVersions.getSelectedIndex();
-        String application = txtApplication.getText();
+        String cycleTest = txtCycle.getText();
+                        
         if (!cycleTest.isEmpty() && version != 0) {
             ModelCycleTest model = new ModelCycleTest();            
             model.setNameCycle(cycleTest);
@@ -134,7 +159,27 @@ public class ViewCycleTest extends javax.swing.JDialog {
         }
     }
     
-    int returnIndex(String name) {
+    int returnIndexApplication(String name) {
+        int numero = 0;
+        for (int posicion = 0; posicion < listApplications.size(); posicion++) {
+            if(name.equalsIgnoreCase(listApplications.get(posicion).getName())){
+                numero = posicion+1;
+            }
+        }
+        return numero;
+    }
+    
+    int returnId(int row) {
+        int id = 0;
+        for (int posicion = 0; posicion < listCycleTests.size(); posicion++) {
+            if(posicion == row){
+                id = listCycleTests.get(posicion).getId();
+            }
+        }
+        return id;
+    }
+    
+    int returnIndexVersion(String name) {
         int numero = 0;
         for (int posicion = 0; posicion < listVersions.size(); posicion++) {
             if(name.equalsIgnoreCase(listVersions.get(posicion).getVersion())){
@@ -149,11 +194,11 @@ public class ViewCycleTest extends javax.swing.JDialog {
         if (selectedRow >= 0) {
             String cycletest = (String) tblListCycles.getValueAt(selectedRow, 1);
             String application = (String) tblListCycles.getValueAt(selectedRow, 2);
-            int version = returnIndex((String) tblListCycles.getValueAt(selectedRow, 3));
+            String version = (String) tblListCycles.getValueAt(selectedRow, 3);
             txtCycle.setText(cycletest);
-            txtApplication.setText(application);
-            cbxVersions.setSelectedIndex(version);
-            editingId = (Integer) tblListCycles.getValueAt(selectedRow, 0);
+            cbxApplication.setSelectedIndex(returnIndexApplication(application));
+            cbxVersions.setSelectedIndex(returnIndexVersion(version));
+            editingId = returnId(selectedRow);
 
             isEditing = true;
             editingRow = selectedRow;
@@ -162,11 +207,11 @@ public class ViewCycleTest extends javax.swing.JDialog {
         }
     }
     
-    void getSelectedComboBox(){
-        int selectedRow = cbxVersions.getSelectedIndex();
+    void getSelectedComboBoxApplications(){
+        int selectedRow = cbxApplication.getSelectedIndex();
         if (selectedRow > 0) {
-            String application = listVersions.get(selectedRow -1).getApplications().getName();
-            txtApplication.setText(application);
+            idApplication = listApplications.get(selectedRow -1).getId();    
+            facade.populateComboBoxVersions(this, idApplication);
         }
     }
     
@@ -207,8 +252,8 @@ public class ViewCycleTest extends javax.swing.JDialog {
         txtCycle = new javax.swing.JTextField();
         lblVersion = new javax.swing.JLabel();
         cbxVersions = new javax.swing.JComboBox<>();
-        txtApplication = new javax.swing.JTextField();
         lblApplication = new javax.swing.JLabel();
+        cbxApplication = new javax.swing.JComboBox<>();
         pnlButtons = new javax.swing.JPanel();
         btnSave = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
@@ -323,7 +368,7 @@ public class ViewCycleTest extends javax.swing.JDialog {
                 {null, null, null, null}
             },
             new String [] {
-                "Código", "Ciclo de Prueba", "Aplicativo", "Versión"
+                "#", "Ciclo de Prueba", "Aplicativo", "Versión"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -336,9 +381,9 @@ public class ViewCycleTest extends javax.swing.JDialog {
         });
         jScrollPane1.setViewportView(tblListCycles);
         if (tblListCycles.getColumnModel().getColumnCount() > 0) {
-            tblListCycles.getColumnModel().getColumn(0).setPreferredWidth(80);
-            tblListCycles.getColumnModel().getColumn(1).setPreferredWidth(235);
-            tblListCycles.getColumnModel().getColumn(2).setPreferredWidth(235);
+            tblListCycles.getColumnModel().getColumn(0).setPreferredWidth(40);
+            tblListCycles.getColumnModel().getColumn(1).setPreferredWidth(255);
+            tblListCycles.getColumnModel().getColumn(2).setPreferredWidth(255);
             tblListCycles.getColumnModel().getColumn(3).setPreferredWidth(72);
         }
 
@@ -369,13 +414,13 @@ public class ViewCycleTest extends javax.swing.JDialog {
             }
         });
 
-        lblVersion.setText("Versión aprobar");
+        lblVersion.setText("Versiones");
 
         cbxVersions.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        txtApplication.setEditable(false);
+        lblApplication.setText("Aplicativos");
 
-        lblApplication.setText("Aplicativo");
+        cbxApplication.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         javax.swing.GroupLayout pnlDataLayout = new javax.swing.GroupLayout(pnlData);
         pnlData.setLayout(pnlDataLayout);
@@ -383,29 +428,29 @@ public class ViewCycleTest extends javax.swing.JDialog {
             pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlDataLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtCycle)
-                    .addComponent(lblVersion)
-                    .addComponent(lblName)
-                    .addComponent(cbxVersions, 0, 209, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
                 .addGroup(pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtApplication, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
-                    .addGroup(pnlDataLayout.createSequentialGroup()
-                        .addComponent(lblApplication)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                    .addComponent(txtCycle, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblName)
+                    .addComponent(lblApplication)
+                    .addComponent(cbxApplication, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblVersion)
+                    .addComponent(cbxVersions, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
         pnlDataLayout.setVerticalGroup(
             pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDataLayout.createSequentialGroup()
-                .addGroup(pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblVersion)
-                    .addComponent(lblApplication))
+                    .addGroup(pnlDataLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(lblApplication)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cbxVersions, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtApplication, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cbxApplication, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lblName)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -418,11 +463,6 @@ public class ViewCycleTest extends javax.swing.JDialog {
         btnDelete.setText("Eliminar");
 
         btnClean.setText("Limpiar");
-        btnClean.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnCleanMouseClicked(evt);
-            }
-        });
 
         javax.swing.GroupLayout pnlButtonsLayout = new javax.swing.GroupLayout(pnlButtons);
         pnlButtons.setLayout(pnlButtonsLayout);
@@ -460,7 +500,7 @@ public class ViewCycleTest extends javax.swing.JDialog {
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(pnlData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
                         .addComponent(pnlButtons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(27, 27, 27))))
         );
@@ -485,11 +525,6 @@ public class ViewCycleTest extends javax.swing.JDialog {
         // TODO add your handling code here:
         activateButtonSave();
     }//GEN-LAST:event_txtCycleMouseClicked
-
-    private void btnCleanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCleanMouseClicked
-        // TODO add your handling code here:
-        clean();
-    }//GEN-LAST:event_btnCleanMouseClicked
 
     /**
      * @param args the command line arguments
@@ -537,6 +572,7 @@ public class ViewCycleTest extends javax.swing.JDialog {
     private javax.swing.JButton btnClean;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnSave;
+    private javax.swing.JComboBox<String> cbxApplication;
     private javax.swing.JComboBox<String> cbxVersions;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblApplication;
@@ -546,7 +582,6 @@ public class ViewCycleTest extends javax.swing.JDialog {
     private javax.swing.JPanel pnlData;
     private javax.swing.JPanel pnlTable;
     private javax.swing.JTable tblListCycles;
-    private javax.swing.JTextField txtApplication;
     private javax.swing.JTextField txtCycle;
     // End of variables declaration//GEN-END:variables
 }

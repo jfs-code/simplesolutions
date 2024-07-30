@@ -38,6 +38,28 @@ public class ControllerApplications {
         return listapplications;
     }
     
+    public ArrayList<ModelApplications> consultOnlyVersioned() {
+        ArrayList<ModelApplications> listapplications = new ArrayList();
+        Conexion conectar = new Conexion();
+        String sql = "SELECT a.id, a.nombre, a.estado FROM aplicaciones a INNER JOIN Versiones v ON a.id = v.aplicacion_id WHERE a.estado = 'A' GROUP BY a.id, a.nombre, a.estado";
+        ResultSet rs;
+        try {
+            rs = conectar.consultar(sql);
+            while(rs.next()){
+                ModelApplications application = new ModelApplications();
+                application.setId(rs.getInt("id"));
+                application.setName(rs.getString("nombre"));
+                application.setStatus(rs.getString("estado"));
+                
+                listapplications.add(application);
+            }
+        } catch (SQLException error) {
+            System.out.println("Error en la consulta de aplicaciones :"+error);
+            JOptionPane.showMessageDialog(null,"Error en la consulta de aplicaciones");
+        }
+        return listapplications;
+    }
+    
     public ModelApplications consultApplication(int id) {
         ModelApplications application = new ModelApplications();
         Conexion conectar = new Conexion();

@@ -40,6 +40,29 @@ public class ControllerVersions {
         return listversions;
     }
     
+    public ArrayList<ModelVersions> consultForId(int id) {
+        ArrayList<ModelVersions> listversions = new ArrayList();
+        Conexion conectar = new Conexion();
+        String sql = "SELECT v.id, v.version, v.aplicacion_id FROM versiones v INNER JOIN Aplicaciones a ON v.aplicacion_id = a.id WHERE a.estado = 'A' AND a.id = "+id;
+        ResultSet rs;
+        try {
+            rs = conectar.consultar(sql);
+            while(rs.next()){
+                ModelVersions version = new ModelVersions();
+                version.setId(rs.getInt("id"));
+                ControllerApplications application = new ControllerApplications();
+                version.setApplications(application.consultApplication(rs.getInt("aplicacion_id")));
+                version.setVersion(rs.getString("version"));
+                
+                listversions.add(version);
+            }
+        } catch (SQLException error) {
+            System.out.println("Error en la consulta de aplicaciones :"+error);
+            JOptionPane.showMessageDialog(null,"Error en la consulta de versiones");
+        }
+        return listversions;
+    }
+    
     public ModelVersions consultVersion(int id) {
         ModelVersions version = new ModelVersions();
         Conexion conectar = new Conexion();

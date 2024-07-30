@@ -85,9 +85,9 @@ public class ViewVersions extends javax.swing.JDialog {
         this.listApplications = listApplications;
         cbxApplication.removeAllItems();
         cbxApplication.addItem("Seleccione Aplicativo");
-        for (int posicion = 0; posicion < listApplications.size(); posicion++) {
-            cbxApplication.addItem(listApplications.get(posicion).getName());
-        }    
+        for (ModelApplications app : listApplications) {
+            cbxApplication.addItem(app.getName());
+        }   
     }
     
     public void fillTable(ArrayList<ModelVersions> listVersions){

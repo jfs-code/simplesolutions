@@ -33,7 +33,7 @@
                   </Group>
                   <Group type="102" attributes="0">
                       <Component id="pnlData" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="29" max="32767" attributes="0"/>
+                      <EmptySpace pref="41" max="32767" attributes="0"/>
                       <Component id="pnlButtons" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
                   </Group>
@@ -103,7 +103,7 @@
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                   <Table columnCount="4" rowCount="100">
-                    <Column editable="false" title="C&#xf3;digo" type="java.lang.Object"/>
+                    <Column editable="false" title="#" type="java.lang.Object"/>
                     <Column editable="false" title="Ciclo de Prueba" type="java.lang.Object"/>
                     <Column editable="false" title="Aplicativo" type="java.lang.Object"/>
                     <Column editable="false" title="Versi&#xf3;n" type="java.lang.Object"/>
@@ -111,17 +111,17 @@
                 </Property>
                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                   <TableColumnModel selectionModel="0">
-                    <Column maxWidth="-1" minWidth="-1" prefWidth="80" resizable="true">
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="40" resizable="true">
                       <Title/>
                       <Editor/>
                       <Renderer/>
                     </Column>
-                    <Column maxWidth="-1" minWidth="-1" prefWidth="235" resizable="true">
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="255" resizable="true">
                       <Title/>
                       <Editor/>
                       <Renderer/>
                     </Column>
-                    <Column maxWidth="-1" minWidth="-1" prefWidth="235" resizable="true">
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="255" resizable="true">
                       <Title/>
                       <Editor/>
                       <Renderer/>
@@ -158,35 +158,35 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="txtCycle" alignment="0" max="32767" attributes="0"/>
-                      <Component id="lblVersion" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="lblName" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="cbxVersions" alignment="0" pref="209" max="32767" attributes="0"/>
-                  </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="txtApplication" pref="233" max="32767" attributes="0"/>
-                      <Group type="102" attributes="0">
-                          <Component id="lblApplication" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      </Group>
+                      <Component id="txtCycle" alignment="0" min="-2" pref="209" max="-2" attributes="0"/>
+                      <Component id="lblName" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="lblApplication" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="cbxApplication" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="lblVersion" min="-2" max="-2" attributes="0"/>
+                      <Component id="cbxVersions" min="-2" pref="209" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace pref="30" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="lblVersion" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="lblApplication" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="lblVersion" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="lblApplication" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="cbxVersions" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txtApplication" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="cbxApplication" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
                   <Component id="lblName" min="-2" max="-2" attributes="0"/>
@@ -210,7 +210,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="lblVersion">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Versi&#xf3;n aprobar"/>
+            <Property name="text" type="java.lang.String" value="Versiones"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JComboBox" name="cbxVersions">
@@ -228,15 +228,25 @@
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JTextField" name="txtApplication">
-          <Properties>
-            <Property name="editable" type="boolean" value="false"/>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JLabel" name="lblApplication">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Aplicativo"/>
+            <Property name="text" type="java.lang.String" value="Aplicativos"/>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="cbxApplication">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="4">
+                <StringItem index="0" value="Item 1"/>
+                <StringItem index="1" value="Item 2"/>
+                <StringItem index="2" value="Item 3"/>
+                <StringItem index="3" value="Item 4"/>
+              </StringArray>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>
@@ -285,9 +295,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Limpiar"/>
           </Properties>
-          <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnCleanMouseClicked"/>
-          </Events>
         </Component>
       </SubComponents>
     </Container>
