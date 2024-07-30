@@ -4,11 +4,14 @@
  */
 package simplesolutions.metrics.views;
 
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import simplesolutions.applications.models.ModelApplications;
+import simplesolutions.controllers.ControllerUtilitario;
+import simplesolutions.controllers.ControllerValidaCaracteres;
 import simplesolutions.cycletest.models.ModelCycleTest;
 import simplesolutions.metrics.facade.FacadeMetrics;
 import simplesolutions.metrics.models.ModelMetrics;
@@ -24,11 +27,13 @@ public class ViewMetrics extends javax.swing.JDialog {
     private int editingRow = -1;
     private int editingId = -1;
     private int idApplication = 0;
+    private int idVersion = 0;
     
     FacadeMetrics facade = new FacadeMetrics();
     private ArrayList<ModelApplications> listApplications;
     private ArrayList<ModelVersions> listVersions;
     private ArrayList<ModelCycleTest> listCycleTests;
+    private ArrayList<ModelMetrics> listMetrics;
     
     public ViewMetrics(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -38,6 +43,7 @@ public class ViewMetrics extends javax.swing.JDialog {
     
     private void init(){   
         cleanComboBoxVersion();
+        cleanComboBoxCycleTest();
         facade.populateComboBoxApplications(this);        
         facade.populateTable(this);
         inactivateButtond();
@@ -48,9 +54,9 @@ public class ViewMetrics extends javax.swing.JDialog {
         btnClean.addActionListener(e -> clean());
         
         cbxApplication.addActionListener(e -> getSelectedComboBoxApplications());
-//        cbxVersions.addActionListener(e -> getSelectedComboBox());
+        cbxVersions.addActionListener(e -> getSelectedComboBoxVersions());
         
-        tblListCycles.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        tblListMetrics.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
@@ -78,6 +84,7 @@ public class ViewMetrics extends javax.swing.JDialog {
         btnSave.setText("Guardar");
         cbxApplication.setSelectedIndex(0);
         cbxVersions.setSelectedIndex(0);
+        cbxCycleTests.setSelectedIndex(0);
     }
     
     void cleanComboBoxVersion(){
@@ -85,19 +92,33 @@ public class ViewMetrics extends javax.swing.JDialog {
         cbxVersions.addItem("Seleccione la versión");
     }
     
+    void cleanComboBoxCycleTest(){
+        cbxCycleTests.removeAllItems();
+        cbxCycleTests.addItem("Seleccione el ciclo");
+    }
+    
     void cleanFields(){
-        txtCycle.setText("");
+        txtNameMetric.setText("");
+        txtApprovedCases.setText("");
+        txtDefectsFound.setText("");
+        txtFailedCases.setText("");
         cbxApplication.setSelectedIndex(0);
         cleanComboBoxVersion();
+        cleanComboBoxCycleTest();
         inactivateButtond();
     }
     
     void cleanTable(){
         for (int posicion = 0; posicion < 100; posicion++) {
-            tblListCycles.setValueAt("", posicion, 0);
-            tblListCycles.setValueAt("", posicion, 1);
-            tblListCycles.setValueAt("", posicion, 2);
-            tblListCycles.setValueAt("", posicion, 3);
+            tblListMetrics.setValueAt("", posicion, 0);
+            tblListMetrics.setValueAt("", posicion, 1);
+            tblListMetrics.setValueAt("", posicion, 2);
+            tblListMetrics.setValueAt("", posicion, 3);
+            tblListMetrics.setValueAt("", posicion, 4);
+            tblListMetrics.setValueAt("", posicion, 5);
+            tblListMetrics.setValueAt("", posicion, 6);
+            tblListMetrics.setValueAt("", posicion, 7);
+            tblListMetrics.setValueAt("", posicion, 8);
         }
     }        
     
@@ -119,33 +140,75 @@ public class ViewMetrics extends javax.swing.JDialog {
         }    
     }
     
-    public void fillTable(ArrayList<ModelCycleTest> listCycleTests){
-        cleanTable();
+    public void fillComboBoxCycleTest(ArrayList<ModelCycleTest> listCycleTests){        
         this.listCycleTests = listCycleTests;
-        for (int posicion = 0; posicion < listCycleTests.size(); posicion++) {
-            tblListCycles.setValueAt(posicion+1, posicion,0);
-            tblListCycles.setValueAt(listCycleTests.get(posicion).getNameCycle(), posicion,1);
-            tblListCycles.setValueAt(listCycleTests.get(posicion).getVersions().getApplications().getName(), posicion,2);
-            tblListCycles.setValueAt(listCycleTests.get(posicion).getVersions().getVersion(), posicion,3);
+        cbxCycleTests.removeAllItems();
+        cbxCycleTests.addItem("Seleccione el ciclo");
+        for (ModelCycleTest cicleTest : listCycleTests) {
+            cbxCycleTests.addItem(cicleTest.getNameCycle());
+        }    
+    }
+    
+    public void fillTable(ArrayList<ModelMetrics> listMetrics){
+        cleanTable();
+        this.listMetrics = listMetrics;
+        for (int posicion = 0; posicion < listMetrics.size(); posicion++) {
+            tblListMetrics.setValueAt(posicion+1, posicion,0);
+            tblListMetrics.setValueAt(listMetrics.get(posicion).getNameMetric(), posicion,1);
+            tblListMetrics.setValueAt(listMetrics.get(posicion).getCycleTest().getVersions().getApplications().getName(), posicion,2);
+            tblListMetrics.setValueAt(listMetrics.get(posicion).getCycleTest().getVersions().getVersion(), posicion,3);
+            tblListMetrics.setValueAt(listMetrics.get(posicion).getCycleTest().getNameCycle(), posicion,4);
+            tblListMetrics.setValueAt(listMetrics.get(posicion).getDate(), posicion,5);
+            tblListMetrics.setValueAt(listMetrics.get(posicion).getApprovedCases(), posicion,6);
+            tblListMetrics.setValueAt(listMetrics.get(posicion).getFailedCases(), posicion,7);
+            tblListMetrics.setValueAt(listMetrics.get(posicion).getDefectsFound(), posicion,8);
         }
     }
     
+    private boolean areValidFields(String metric, String approvedCases, String failedCases, String defectsFound){
+        return !metric.isEmpty() && !approvedCases.isEmpty() && !failedCases.isEmpty() && !defectsFound.isEmpty();
+    }
+    
+    private void showErrorMessage(){
+        String mensajeError = "Los campos nombre de la métrica, casos aprobados, casos fallados, defectos encontrados. No pueden estar vacíos.";
+        String tituloError = "Error";
+        JOptionPane.showMessageDialog(this, mensajeError, tituloError, JOptionPane.ERROR_MESSAGE);
+    }
+    
+    ModelMetrics dataForSave() {        
+        ModelMetrics model = new ModelMetrics();        
+        int cycleTest = cbxCycleTests.getSelectedIndex();
+        String metric = txtNameMetric.getText();
+        String approvedCases = txtApprovedCases.getText();
+        String failedCases = txtFailedCases.getText();
+        String defectsFound = txtDefectsFound.getText();
+        if (areValidFields(metric, approvedCases, failedCases, defectsFound)) {
+            model.setNameMetric(metric);
+            ModelCycleTest selectedCycleTest = listCycleTests.get(cycleTest - 1);            
+            model.setCycleTest(selectedCycleTest);
+            model.setApprovedCases(Integer.parseInt(approvedCases));
+            model.setFailedCases(Integer.parseInt(failedCases));                        
+            model.setDefectsFound(Integer.parseInt(defectsFound));
+            ControllerUtilitario utilitarioDate = new ControllerUtilitario();
+            model.setDate(utilitarioDate.fechaHoy());            
+        }else {
+            showErrorMessage();
+        }
+        return model;
+    }
+    
     void save() {
-        String application = cbxApplication.getSelectedItem().toString();
+        int application = cbxApplication.getSelectedIndex();
         int version = cbxVersions.getSelectedIndex();
-        String cycleTest = txtCycle.getText();
+        int cycleTest = cbxCycleTests.getSelectedIndex();
                         
-        if (!cycleTest.isEmpty() && version != 0) {
-            ModelMetrics model = new ModelMetrics();            
-//            model.setNameCycle(cycleTest);
-//            ModelVersions selectedVersion = listVersions.get(version - 1);
-//            model.setVersions(selectedVersion);
+        if (application != 0 && version != 0 && cycleTest != 0) {
+            ModelMetrics model = dataForSave();   
 
             if (isEditing && editingRow != -1) {
                 model.setId(editingId);
-                facade.update(model);
-                tblListCycles.setValueAt(cycleTest, editingRow, 1); 
-                tblListCycles.setValueAt(application, editingRow, 2);              
+                facade.update(model);   
+                facade.populateTable(this);
             } else {
                 facade.save(model);
                 facade.populateTable(this);
@@ -157,7 +220,7 @@ public class ViewMetrics extends javax.swing.JDialog {
             editingId = -1;
             btnSave.setText("Guardar");
         } else {
-            JOptionPane.showMessageDialog(this, "Debe seleccionar un aplicativo ó la versión no puede estar vacía.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un aplicativo, la versión ó el ciclo de pruebas. Debe tener un elemento seleccionado cada uno.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -173,9 +236,9 @@ public class ViewMetrics extends javax.swing.JDialog {
     
     int returnId(int row) {
         int id = 0;
-        for (int posicion = 0; posicion < listCycleTests.size(); posicion++) {
+        for (int posicion = 0; posicion < listMetrics.size(); posicion++) {
             if(posicion == row){
-                id = listCycleTests.get(posicion).getId();
+                id = listMetrics.get(posicion).getId();
             }
         }
         return id;
@@ -191,15 +254,27 @@ public class ViewMetrics extends javax.swing.JDialog {
         return numero;
     }
     
+    int returnIndexCycleTest(String name) {
+        int numero = 0;
+        for (int posicion = 0; posicion < listCycleTests.size(); posicion++) {
+            if(name.equalsIgnoreCase(listCycleTests.get(posicion).getNameCycle())){
+                numero = posicion+1;
+            }
+        }
+        return numero;
+    }
+    
     void getSelectedTable(){
-        int selectedRow = tblListCycles.getSelectedRow();
+        int selectedRow = tblListMetrics.getSelectedRow();
         if (selectedRow >= 0) {
-            String cycletest = (String) tblListCycles.getValueAt(selectedRow, 1);
-            String application = (String) tblListCycles.getValueAt(selectedRow, 2);
-            String version = (String) tblListCycles.getValueAt(selectedRow, 3);
-            txtCycle.setText(cycletest);
-            cbxApplication.setSelectedIndex(returnIndexApplication(application));
-            cbxVersions.setSelectedIndex(returnIndexVersion(version));
+            cbxApplication.setSelectedIndex(returnIndexApplication((String) tblListMetrics.getValueAt(selectedRow, 2)));
+            cbxVersions.setSelectedIndex(returnIndexVersion((String) tblListMetrics.getValueAt(selectedRow, 3)));
+            cbxCycleTests.setSelectedIndex(returnIndexCycleTest((String) tblListMetrics.getValueAt(selectedRow, 4)));
+                        
+            txtNameMetric.setText(tblListMetrics.getValueAt(selectedRow, 1).toString());
+            txtApprovedCases.setText(tblListMetrics.getValueAt(selectedRow, 6).toString());
+            txtFailedCases.setText(tblListMetrics.getValueAt(selectedRow, 7).toString());
+            txtDefectsFound.setText(tblListMetrics.getValueAt(selectedRow, 8).toString());
             editingId = returnId(selectedRow);
 
             isEditing = true;
@@ -217,14 +292,22 @@ public class ViewMetrics extends javax.swing.JDialog {
         }
     }
     
+    void getSelectedComboBoxVersions(){
+        int selectedRow = cbxVersions.getSelectedIndex();
+        if (selectedRow > 0) {
+            idVersion = listVersions.get(selectedRow -1).getId();    
+            facade.populateComboBoxCycleTests(this, idVersion);
+        }
+    }
+    
     void delete(){
-        String name = txtCycle.getText();
+        String name = txtNameMetric.getText();
         if (!name.isEmpty()) {
             ModelMetrics model = new ModelMetrics();
 
             if (editingRow != -1) {
                 model.setId(editingId);
-                facade.delete(model);                
+                facade.delete(model);
                 facade.populateTable(this);              
             } 
 
@@ -236,6 +319,11 @@ public class ViewMetrics extends javax.swing.JDialog {
         } else {
             JOptionPane.showMessageDialog(this, "El nombre no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+    
+    void validatesNumbers(KeyEvent evt) {
+        ControllerValidaCaracteres vc = new ControllerValidaCaracteres();
+        vc.validaNumeros(evt);
     }
 
     /**
@@ -253,10 +341,10 @@ public class ViewMetrics extends javax.swing.JDialog {
         btnClean = new javax.swing.JButton();
         pnlTable = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblListCycles = new javax.swing.JTable();
+        tblListMetrics = new javax.swing.JTable();
         pnlData = new javax.swing.JPanel();
         lblName = new javax.swing.JLabel();
-        txtCycle = new javax.swing.JTextField();
+        txtNameMetric = new javax.swing.JTextField();
         lblVersion = new javax.swing.JLabel();
         cbxVersions = new javax.swing.JComboBox<>();
         lblApplication = new javax.swing.JLabel();
@@ -271,6 +359,7 @@ public class ViewMetrics extends javax.swing.JDialog {
         lblDefectsFound = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Getión de métricas");
 
         btnSave.setText("Guardar");
 
@@ -304,131 +393,132 @@ public class ViewMetrics extends javax.swing.JDialog {
 
         pnlTable.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Méticas realizadas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 12))); // NOI18N
 
-        tblListCycles.setModel(new javax.swing.table.DefaultTableModel(
+        tblListMetrics.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "#", "Métrica", "Aplicativo", "Versión", "Fecha", "Aprobadas", "Falladas", "Defectos"
+                "#", "Métrica", "Aplicativo", "Versión", "Ciclo de pruebas", "Fecha", "Aprobadas", "Falladas", "Defectos"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(tblListCycles);
-        if (tblListCycles.getColumnModel().getColumnCount() > 0) {
-            tblListCycles.getColumnModel().getColumn(0).setPreferredWidth(50);
-            tblListCycles.getColumnModel().getColumn(1).setPreferredWidth(150);
-            tblListCycles.getColumnModel().getColumn(2).setPreferredWidth(150);
-            tblListCycles.getColumnModel().getColumn(3).setPreferredWidth(150);
-            tblListCycles.getColumnModel().getColumn(4).setPreferredWidth(60);
-            tblListCycles.getColumnModel().getColumn(5).setPreferredWidth(100);
-            tblListCycles.getColumnModel().getColumn(6).setPreferredWidth(100);
-            tblListCycles.getColumnModel().getColumn(7).setPreferredWidth(100);
+        jScrollPane1.setViewportView(tblListMetrics);
+        if (tblListMetrics.getColumnModel().getColumnCount() > 0) {
+            tblListMetrics.getColumnModel().getColumn(0).setPreferredWidth(50);
+            tblListMetrics.getColumnModel().getColumn(1).setPreferredWidth(150);
+            tblListMetrics.getColumnModel().getColumn(2).setPreferredWidth(150);
+            tblListMetrics.getColumnModel().getColumn(3).setPreferredWidth(150);
+            tblListMetrics.getColumnModel().getColumn(4).setPreferredWidth(150);
+            tblListMetrics.getColumnModel().getColumn(5).setPreferredWidth(120);
+            tblListMetrics.getColumnModel().getColumn(6).setPreferredWidth(80);
+            tblListMetrics.getColumnModel().getColumn(7).setPreferredWidth(80);
+            tblListMetrics.getColumnModel().getColumn(8).setPreferredWidth(80);
         }
 
         javax.swing.GroupLayout pnlTableLayout = new javax.swing.GroupLayout(pnlTable);
@@ -437,7 +527,7 @@ public class ViewMetrics extends javax.swing.JDialog {
             pnlTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlTableLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 860, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1010, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlTableLayout.setVerticalGroup(
@@ -452,9 +542,9 @@ public class ViewMetrics extends javax.swing.JDialog {
 
         lblName.setText("Nombre de la métrica");
 
-        txtCycle.addMouseListener(new java.awt.event.MouseAdapter() {
+        txtNameMetric.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                txtCycleMouseClicked(evt);
+                txtNameMetricMouseClicked(evt);
             }
         });
 
@@ -470,6 +560,24 @@ public class ViewMetrics extends javax.swing.JDialog {
 
         cbxCycleTests.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        txtApprovedCases.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtApprovedCasesKeyTyped(evt);
+            }
+        });
+
+        txtFailedCases.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtFailedCasesKeyTyped(evt);
+            }
+        });
+
+        txtDefectsFound.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtDefectsFoundKeyTyped(evt);
+            }
+        });
+
         lblApprovedCases.setText("Casos aprobados");
 
         lblFailedCases.setText("Casos fallados");
@@ -483,34 +591,36 @@ public class ViewMetrics extends javax.swing.JDialog {
             .addGroup(pnlDataLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtCycle, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblName)
-                    .addComponent(cbxApplication, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblApplication))
-                .addGap(18, 18, 18)
-                .addGroup(pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlDataLayout.createSequentialGroup()
+                        .addGroup(pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblApplication)
+                            .addComponent(cbxApplication, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(64, 64, 64)
                         .addGroup(pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblVersion)
-                            .addComponent(cbxVersions, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
+                            .addComponent(cbxVersions, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
                         .addGroup(pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblCycleTests)
-                            .addComponent(cbxCycleTests, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(cbxCycleTests, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(26, 26, 26))
                     .addGroup(pnlDataLayout.createSequentialGroup()
+                        .addGroup(pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtNameMetric, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblName))
+                        .addGap(18, 18, 18)
                         .addGroup(pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblApprovedCases)
                             .addComponent(txtApprovedCases, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
                         .addGroup(pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblFailedCases)
                             .addComponent(txtFailedCases, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(52, 52, 52)
+                        .addGap(18, 18, 18)
                         .addGroup(pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblDefectsFound)
-                            .addComponent(txtDefectsFound, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(txtDefectsFound, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         pnlDataLayout.setVerticalGroup(
             pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -521,13 +631,13 @@ public class ViewMetrics extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cbxCycleTests, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlDataLayout.createSequentialGroup()
-                        .addGroup(pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblApplication)
-                            .addComponent(lblVersion))
+                        .addComponent(lblApplication)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cbxVersions, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cbxApplication, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(cbxApplication, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlDataLayout.createSequentialGroup()
+                        .addComponent(lblVersion)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cbxVersions, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblName)
@@ -536,7 +646,7 @@ public class ViewMetrics extends javax.swing.JDialog {
                     .addComponent(lblDefectsFound))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtCycle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtNameMetric, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtApprovedCases, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtFailedCases, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtDefectsFound, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -576,10 +686,25 @@ public class ViewMetrics extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtCycleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtCycleMouseClicked
+    private void txtNameMetricMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtNameMetricMouseClicked
         // TODO add your handling code here:
-//        activateButtonSave();
-    }//GEN-LAST:event_txtCycleMouseClicked
+        activateButtonSave();
+    }//GEN-LAST:event_txtNameMetricMouseClicked
+
+    private void txtApprovedCasesKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtApprovedCasesKeyTyped
+        // TODO add your handling code here:
+        validatesNumbers(evt);
+    }//GEN-LAST:event_txtApprovedCasesKeyTyped
+
+    private void txtFailedCasesKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFailedCasesKeyTyped
+        // TODO add your handling code here:
+        validatesNumbers(evt);
+    }//GEN-LAST:event_txtFailedCasesKeyTyped
+
+    private void txtDefectsFoundKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDefectsFoundKeyTyped
+        // TODO add your handling code here:
+        validatesNumbers(evt);
+    }//GEN-LAST:event_txtDefectsFoundKeyTyped
 
     /**
      * @param args the command line arguments
@@ -641,10 +766,10 @@ public class ViewMetrics extends javax.swing.JDialog {
     private javax.swing.JPanel pnlButtons;
     private javax.swing.JPanel pnlData;
     private javax.swing.JPanel pnlTable;
-    private javax.swing.JTable tblListCycles;
+    private javax.swing.JTable tblListMetrics;
     private javax.swing.JTextField txtApprovedCases;
-    private javax.swing.JTextField txtCycle;
     private javax.swing.JTextField txtDefectsFound;
     private javax.swing.JTextField txtFailedCases;
+    private javax.swing.JTextField txtNameMetric;
     // End of variables declaration//GEN-END:variables
 }

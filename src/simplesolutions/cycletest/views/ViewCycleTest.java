@@ -46,7 +46,6 @@ public class ViewCycleTest extends javax.swing.JDialog {
         btnClean.addActionListener(e -> clean());
         
         cbxApplication.addActionListener(e -> getSelectedComboBoxApplications());
-//        cbxVersions.addActionListener(e -> getSelectedComboBox());
         
         tblListCycles.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override

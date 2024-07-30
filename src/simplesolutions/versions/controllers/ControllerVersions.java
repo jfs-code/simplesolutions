@@ -34,7 +34,7 @@ public class ControllerVersions {
                 listversions.add(version);
             }
         } catch (SQLException error) {
-            System.out.println("Error en la consulta de aplicaciones :"+error);
+            System.out.println("Error en la consulta de versiones :"+error);
             JOptionPane.showMessageDialog(null,"Error en la consulta de versiones");
         }
         return listversions;
@@ -57,8 +57,8 @@ public class ControllerVersions {
                 listversions.add(version);
             }
         } catch (SQLException error) {
-            System.out.println("Error en la consulta de aplicaciones :"+error);
-            JOptionPane.showMessageDialog(null,"Error en la consulta de versiones");
+            System.out.println("Error en la consulta de versiones por id :"+error);
+            JOptionPane.showMessageDialog(null,"Error en la consulta de versiones por id");
         }
         return listversions;
     }

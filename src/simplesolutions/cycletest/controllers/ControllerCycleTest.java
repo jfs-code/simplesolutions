@@ -34,10 +34,54 @@ public class ControllerCycleTest {
                 listCyclesTest.add(cycleTest);
             }
         } catch (SQLException error) {
-            System.out.println("Error en la consulta de aplicaciones :"+error);
+            System.out.println("Error en la consulta de ciclo de pruebas :"+error);
             JOptionPane.showMessageDialog(null,"Error en la consulta de ciclo de pruebas");
         }
         return listCyclesTest;
+    }
+    
+    public ArrayList<ModelCycleTest> consultForId(int id) {
+        ArrayList<ModelCycleTest> listCyclesTest = new ArrayList();
+        Conexion conectar = new Conexion();
+//        String sql = "SELECT c.id, c.version_id, v.nombre_ciclo FROM ciclosdeprueba c INNER JOIN versiones v ON c.version_id = v.id WHERE v.estado = 'A' AND a.id = "+id;
+        String sql = "SELECT c.id, c.version_id, c.nombre_ciclo FROM ciclosdeprueba c INNER JOIN versiones v ON c.version_id = v.id WHERE v.id = "+id;
+        ResultSet rs;
+        try {
+            rs = conectar.consultar(sql);
+            while(rs.next()){
+                ModelCycleTest cycleTest = new ModelCycleTest();
+                cycleTest.setId(rs.getInt("id"));
+                ControllerVersions version = new ControllerVersions();
+                cycleTest.setVersions(version.consultVersion(rs.getInt("version_id")));
+                cycleTest.setNameCycle(rs.getString("nombre_ciclo"));
+                
+                listCyclesTest.add(cycleTest);
+            }
+        } catch (SQLException error) {
+            System.out.println("Error en la consulta de ciclos de prueba por id :"+error);
+            JOptionPane.showMessageDialog(null,"Error en la consulta de ciclos de prueba por id");
+        }
+        return listCyclesTest;
+    }
+    
+    public ModelCycleTest consultCycleTest(int id) {
+        ModelCycleTest cyclyTest = new ModelCycleTest();
+        Conexion conectar = new Conexion();
+        String sql = "SELECT * FROM ciclosdeprueba WHERE id ="+id;
+        ResultSet rs;
+        try {
+            rs = conectar.consultar(sql);
+            if(rs.next()){
+                cyclyTest.setId(rs.getInt("id"));
+                cyclyTest.setNameCycle(rs.getString("nombre_ciclo"));
+                ControllerVersions version = new ControllerVersions();
+                cyclyTest.setVersions(version.consultVersion(rs.getInt("version_id")));
+            }
+        } catch (SQLException error) {
+            System.out.println("Error en la consulta de ciclo de pruebas por id :"+error);
+            JOptionPane.showMessageDialog(null,"Error en la consulta de ciclo de pruebas por id");
+        }
+        return cyclyTest;
     }
     
     public void save(ModelCycleTest model){

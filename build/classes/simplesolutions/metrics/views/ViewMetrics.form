@@ -3,6 +3,7 @@
 <Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
+    <Property name="title" type="java.lang.String" value="Geti&#xf3;n de m&#xe9;tricas"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -123,7 +124,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jScrollPane1" min="-2" pref="860" max="-2" attributes="0"/>
+                  <Component id="jScrollPane1" min="-2" pref="1010" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -146,14 +147,15 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTable" name="tblListCycles">
+            <Component class="javax.swing.JTable" name="tblListMetrics">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="8" rowCount="100">
+                  <Table columnCount="9" rowCount="100">
                     <Column editable="false" title="#" type="java.lang.Object"/>
                     <Column editable="false" title="M&#xe9;trica" type="java.lang.Object"/>
                     <Column editable="false" title="Aplicativo" type="java.lang.Object"/>
                     <Column editable="false" title="Versi&#xf3;n" type="java.lang.Object"/>
+                    <Column editable="false" title="Ciclo de pruebas" type="java.lang.Object"/>
                     <Column editable="false" title="Fecha" type="java.lang.Object"/>
                     <Column editable="false" title="Aprobadas" type="java.lang.Object"/>
                     <Column editable="false" title="Falladas" type="java.lang.Object"/>
@@ -182,22 +184,27 @@
                       <Editor/>
                       <Renderer/>
                     </Column>
-                    <Column maxWidth="-1" minWidth="-1" prefWidth="60" resizable="true">
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="150" resizable="true">
                       <Title/>
                       <Editor/>
                       <Renderer/>
                     </Column>
-                    <Column maxWidth="-1" minWidth="-1" prefWidth="100" resizable="true">
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="120" resizable="true">
                       <Title/>
                       <Editor/>
                       <Renderer/>
                     </Column>
-                    <Column maxWidth="-1" minWidth="-1" prefWidth="100" resizable="true">
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="80" resizable="true">
                       <Title/>
                       <Editor/>
                       <Renderer/>
                     </Column>
-                    <Column maxWidth="-1" minWidth="-1" prefWidth="100" resizable="true">
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="80" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="80" resizable="true">
                       <Title/>
                       <Editor/>
                       <Renderer/>
@@ -230,43 +237,46 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="txtCycle" alignment="0" min="-2" pref="209" max="-2" attributes="0"/>
-                      <Component id="lblName" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="cbxApplication" alignment="0" min="-2" pref="209" max="-2" attributes="0"/>
-                      <Component id="lblApplication" alignment="0" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="lblApplication" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="cbxApplication" alignment="0" min="-2" pref="240" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="lblVersion" min="-2" max="-2" attributes="0"/>
-                              <Component id="cbxVersions" min="-2" pref="209" max="-2" attributes="0"/>
+                              <Component id="cbxVersions" min="-2" pref="240" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <EmptySpace pref="73" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="lblCycleTests" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="cbxCycleTests" alignment="0" min="-2" pref="209" max="-2" attributes="0"/>
+                              <Component id="lblCycleTests" min="-2" max="-2" attributes="0"/>
+                              <Component id="cbxCycleTests" min="-2" pref="240" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="txtNameMetric" alignment="0" min="-2" pref="209" max="-2" attributes="0"/>
+                              <Component id="lblName" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="lblApprovedCases" min="-2" max="-2" attributes="0"/>
                               <Component id="txtApprovedCases" min="-2" pref="102" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="lblFailedCases" min="-2" max="-2" attributes="0"/>
                               <Component id="txtFailedCases" min="-2" pref="102" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="lblDefectsFound" min="-2" max="-2" attributes="0"/>
                               <Component id="txtDefectsFound" min="-2" pref="123" max="-2" attributes="0"/>
                           </Group>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -280,15 +290,14 @@
                           <Component id="cbxCycleTests" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="lblApplication" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblVersion" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="lblApplication" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="cbxVersions" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="cbxApplication" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="cbxApplication" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <Component id="lblVersion" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="cbxVersions" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
@@ -300,7 +309,7 @@
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="txtCycle" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="txtNameMetric" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="txtApprovedCases" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="txtFailedCases" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="txtDefectsFound" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -316,9 +325,9 @@
             <Property name="text" type="java.lang.String" value="Nombre de la m&#xe9;trica"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="txtCycle">
+        <Component class="javax.swing.JTextField" name="txtNameMetric">
           <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="txtCycleMouseClicked"/>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="txtNameMetricMouseClicked"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="lblVersion">
@@ -382,10 +391,19 @@
           </AuxValues>
         </Component>
         <Component class="javax.swing.JTextField" name="txtApprovedCases">
+          <Events>
+            <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtApprovedCasesKeyTyped"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JTextField" name="txtFailedCases">
+          <Events>
+            <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtFailedCasesKeyTyped"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JTextField" name="txtDefectsFound">
+          <Events>
+            <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtDefectsFoundKeyTyped"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="lblApprovedCases">
           <Properties>

@@ -7,9 +7,6 @@ import simplesolutions.facade.FacadeMenu;
  */
 public final class ViewMenu extends javax.swing.JFrame {
 
-    /**
-     * Creates new form VwMenu
-     */
     public ViewMenu() {
         initComponents();
         init();
@@ -38,6 +35,7 @@ public final class ViewMenu extends javax.swing.JFrame {
         mntVersions = new javax.swing.JMenuItem();
         mntMetrics = new javax.swing.JMenuItem();
         mntCycleTest = new javax.swing.JMenuItem();
+        mntReport = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("QA Insight");
@@ -84,6 +82,15 @@ public final class ViewMenu extends javax.swing.JFrame {
         });
         mngestionfacturacion.add(mntCycleTest);
 
+        mntReport.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        mntReport.setText("Reporte");
+        mntReport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mntReportActionPerformed(evt);
+            }
+        });
+        mngestionfacturacion.add(mntReport);
+
         mnbmenu.add(mngestionfacturacion);
 
         setJMenuBar(mnbmenu);
@@ -121,6 +128,11 @@ public final class ViewMenu extends javax.swing.JFrame {
         // TODO add your handling code here:
         facadeMenu.executeCycleTest();
     }//GEN-LAST:event_mntCycleTestActionPerformed
+
+    private void mntReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mntReportActionPerformed
+        // TODO add your handling code here:
+        facadeMenu.executeReport();
+    }//GEN-LAST:event_mntReportActionPerformed
 
     /**
      * @param args the command line arguments
@@ -165,6 +177,7 @@ public final class ViewMenu extends javax.swing.JFrame {
     private javax.swing.JMenuItem mntApplications;
     private javax.swing.JMenuItem mntCycleTest;
     private javax.swing.JMenuItem mntMetrics;
+    private javax.swing.JMenuItem mntReport;
     private javax.swing.JMenuItem mntVersions;
     // End of variables declaration//GEN-END:variables
 }

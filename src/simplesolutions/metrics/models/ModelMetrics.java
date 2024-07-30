@@ -14,7 +14,7 @@ public class ModelMetrics {
     private int id;
     private ModelCycleTest cycleTest;
     private String nameMetric;
-    private Date date;
+    private String date;
     private int approvedCases;
     private int failedCases;
     private int defectsFound;
@@ -45,11 +45,11 @@ public class ModelMetrics {
         this.nameMetric = nameMetric;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -96,7 +96,7 @@ public class ModelMetrics {
     public ModelMetrics() {
     }
 
-    public ModelMetrics(int id, ModelCycleTest cycleTest, String nameMetric, Date date, int approvedCases, int failedCases, int defectsFound, double successRate, double defectRate) {
+    public ModelMetrics(int id, ModelCycleTest cycleTest, String nameMetric, String date, int approvedCases, int failedCases, int defectsFound, double successRate, double defectRate) {
         this.id = id;
         this.cycleTest = cycleTest;
         this.nameMetric = nameMetric;

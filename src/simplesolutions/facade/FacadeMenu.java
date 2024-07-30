@@ -9,6 +9,7 @@ import simplesolutions.applications.views.ViewApplications;
 import simplesolutions.cycletest.views.ViewCycleTest;
 import simplesolutions.metrics.views.ViewMetrics;
 import simplesolutions.versions.views.ViewVersions;
+import simplesolutions.views.ViewReport;
 
 /**
  * @author JFS
@@ -43,6 +44,12 @@ public class FacadeMenu {
         ViewCycleTest vct=new ViewCycleTest(parentFrame, true);
         vct.setLocationRelativeTo(null);
         vct.setVisible(true);
+    }
+    
+    public void executeReport(){
+        ViewReport vr=new ViewReport(parentFrame, true);
+        vr.setLocationRelativeTo(null);
+        vr.setVisible(true);
     }
 
 }
