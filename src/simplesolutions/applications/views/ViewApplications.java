@@ -20,7 +20,7 @@ public class ViewApplications extends javax.swing.JDialog {
     private int editingRow = -1;
     private int editingId = -1;
     
-    FacadeApplications facade = new FacadeApplications();
+    public FacadeApplications facade = new FacadeApplications();
     
     public ViewApplications(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
