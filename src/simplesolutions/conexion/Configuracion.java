@@ -18,7 +18,7 @@ public interface Configuracion {
 //    String USERNAME = "postgres";
 //    String PASSWORD = "postgres";
     
-    String DRIVER = "com.mysql.jdbc.Driver";
+    String DRIVER = "com.mysql.cj.jdbc.Driver";
     String DATA_BASE = "simplesolutions";   
     String CONNECTION_URL = "jdbc:mysql://localhost:3306/"+DATA_BASE;
     String USERNAME = "root";

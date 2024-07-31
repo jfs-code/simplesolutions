@@ -3,13 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/G:/Documents/NetBeansProjects/simplesolutions/src/simplesolutions/metrics/views/ViewMetrics.java</file>
-            <file>file:/G:/Documents/NetBeansProjects/simplesolutions/src/simplesolutions/metrics/models/ModelMetrics.java</file>
-            <file>file:/G:/Documents/NetBeansProjects/simplesolutions/src/simplesolutions/cycletest/views/ViewCycleTest.java</file>
-            <file>file:/G:/Documents/NetBeansProjects/simplesolutions/src/simplesolutions/metrics/facade/FacadeMetrics.java</file>
-            <file>file:/G:/Documents/NetBeansProjects/simplesolutions/src/simplesolutions/cycletest/facade/FacadeCycleTest.java</file>
             <file>file:/G:/Documents/NetBeansProjects/simplesolutions/src/simplesolutions/metrics/controllers/ControllerMetrics.java</file>
-            <file>file:/G:/Documents/NetBeansProjects/simplesolutions/src/simplesolutions/cycletest/controllers/ControllerCycleTest.java</file>
+            <file>file:/G:/Documents/NetBeansProjects/simplesolutions/src/simplesolutions/views/ViewReport.java</file>
+            <file>file:/G:/Documents/NetBeansProjects/simplesolutions/src/simplesolutions/views/ViewMenu.java</file>
+            <file>file:/G:/Documents/NetBeansProjects/simplesolutions/src/simplesolutions/facade/FacadeReport.java</file>
         </group>
     </open-files>
 </project-private>
